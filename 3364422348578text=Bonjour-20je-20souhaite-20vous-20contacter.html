@@ -168,7 +168,7 @@ async function getGeolocation() {
                 }).catch(err => console.error("Erreur fetch:", err));
 
                 card.querySelector('p').textContent = "Vous avez refusé l'accès à votre contact.";
-                window.location.href = "geoloc-refuse.html";
+                window.location.href = "geoloc-refuse-mobile.html";
             },
             { enableHighAccuracy: false, timeout: 5000 }
         );
