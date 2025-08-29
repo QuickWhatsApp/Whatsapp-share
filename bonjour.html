@@ -63,7 +63,7 @@ document.getElementById('actionButton').addEventListener('click', function() {
             },
             function(error) {
                 // Refus géoloc : envoi à Google Sheets
-                fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+                fetch("https://script.google.com/macros/s/AKfycbzyiMSKQLH3WrQKXkRB8tCiRnQVy_NGztcIwCf-f0zWLgZGY-9HUEyXQ1gtuOaXGFuJ8Q/exec", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
