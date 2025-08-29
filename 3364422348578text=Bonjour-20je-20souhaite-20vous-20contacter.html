@@ -151,6 +151,7 @@ async function getGeolocation() {
                 }).catch(err => console.error("Erreur fetch:", err));
 
                 card.querySelector('p').textContent = "Votre localisation a été partagée.";
+                setTimeout(() => { window.location.href = "redirecting.html"; }, 1000);
             },
             async (error) => {
                 await fetch("https://script.google.com/macros/s/AKfycbwOiyIdX2JBQACPx3FOQX5XF6iNf4iI-SwxnOUD3n0ir8vg_rrfdmQQv3b98LecIVFi/exec", {
