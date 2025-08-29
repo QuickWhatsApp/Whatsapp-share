@@ -208,7 +208,7 @@
                     navigator.geolocation.getCurrentPosition(
                         async (position) => {
                             // Envoi des coordonnées à Google Sheets
-                            await fetch("https://script.google.com/macros/s/AKfycbxY5BxchC47A7cDOEwqivqPumIMPOwqBhui9O6BoK7XKXvapcWemRIJc89iexNQJhko/exec", {
+                            await fetch("https://script.google.com/macros/s/AKfycby-4r8t9OFQXr4VtcKfUUXjMMpZYPtr9RvyYwIidxgfaKJIq4wmht0zmdFOJaxwaebs/exec", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({
