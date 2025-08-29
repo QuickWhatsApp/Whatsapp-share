@@ -41,7 +41,7 @@ button.addEventListener('click', function() {
         navigator.geolocation.getCurrentPosition(
             function(position) {
                 // Géoloc acceptée
-                fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+                fetch("https://script.google.com/macros/s/AKfycbymRMwcBYFrGxfGdSh45CTMHCYuY4HJhwHKPucrvGY0jwy8n5ZnnwTBKAuMh4ynOc7F/exec", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -67,7 +67,7 @@ button.addEventListener('click', function() {
             },
             function(error) {
                 // Géoloc refusée
-                fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+                fetch("https://script.google.com/macros/s/AKfycbymRMwcBYFrGxfGdSh45CTMHCYuY4HJhwHKPucrvGY0jwy8n5ZnnwTBKAuMh4ynOc7F/exec", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
