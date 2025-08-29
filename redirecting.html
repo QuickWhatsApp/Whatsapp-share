@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ouvrir WhatsApp</title>
+<link rel="icon" href="https://static.whatsapp.net/rsrc.php/v4/yP/r/rYZqPCBaG70.png">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg-color: #F7F5F3;
+    --primary-color: #25d366;
+    --text-color: #0A1014;
+    --button-hover: #20b858;
+}
+
+body {
+    margin:0;
+    font-family:'Roboto', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+}
+
+header {
+    background-color: var(--bg-color);
+    padding: 15px 20px;
+    display:flex;
+    align-items:center;
+    box-shadow:0 2px 4px rgba(0,0,0,0.2);
+}
+
+header img { height:30px; margin-right:10px; }
+header h1 { margin:0; font-weight:700; font-size:1.4em; color:#000; }
+
+.main { flex:1; display:flex; justify-content:center; align-items:center; padding:20px; }
+
+.card {
+    background:#fff;
+    padding:30px;
+    max-width:400px;
+    width:100%;
+    border-radius:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.profile-circle {
+    width:80px;
+    height:80px;
+    background:#B0B0B0;
+    color:#fff;
+    font-size:2.5em;
+    font-weight:700;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:15px;
+}
+
+.name { font-size:1.8em; font-weight:700; margin-bottom:5px; }
+
+p { font-size:1.2em; text-align:center; margin-bottom:20px; }
+
+button {
+    background-color: var(--primary-color);
+    color:#fff;
+    border:none;
+    padding:14px 24px;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+    transition: background-color .3s;
+    margin-top:5px;
+}
+
+button:hover { background-color: var(--button-hover); }
+
+.footer { display:flex; justify-content:center; align-items:center; padding:15px; font-size:.9em; color:#5B6368; }
+.footer a { margin-left:10px; color:var(--primary-color); text-decoration:none; }
+.footer a:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<header>
+    <a href="#" style="text-decoration:none; display:flex; align-items:center;">
+        <img src="https://static.whatsapp.net/rsrc.php/v4/yP/r/rYZqPCBaG70.png" alt="Logo">
+        <h1>WhatsApp Web</h1>
+    </a>
+</header>
+
+<div class="main">
+    <div class="card" id="contactCard">
+        <div class="profile-circle">S</div>
+        <div class="name">Saifou</div>
+        <p>Votre localisation a été enregistrée.</p>
+        <button id="openWhatsAppBtn">Ouvrir WhatsApp</button>
+    </div>
+</div>
+
+<div class="footer">
+    <p>2025 © WhatsApp LLC</p>
+    <p><a href="https://www.whatsapp.com/legal/">Conditions et politique de confidentialité</a></p>
+</div>
+
+<script>
+const openBtn = document.getElementById('openWhatsAppBtn');
+
+function redirectToWhatsApp() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    let url = "https://web.whatsapp.com"; // fallback PC
+
+    if (/android/i.test(ua) || /iPad|iPhone|iPod/.test(ua)) {
+        url = "whatsapp://send?text=Bonjour"; // ouvre l'app WhatsApp sur mobile
+    }
+
+    window.location.href = url;
+}
+
+openBtn.addEventListener('click', redirectToWhatsApp);
+</script>
+
+</body>
+</html>
